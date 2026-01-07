@@ -119,3 +119,25 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
     )
 }
 
+@Composable
+fun ErrorScreen(retryAction: () -> Unit, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // --- BAGIAN YANG DIUBAH (Hapus Image, Ganti Icon) ---
+        androidx.compose.material3.Icon(
+            imageVector = androidx.compose.material.icons.Icons.Default.Warning,
+            contentDescription = null,
+            modifier = Modifier.size(72.dp) // Biar ikonnya agak besar
+        )
+        // ----------------------------------------------------
+
+        Text(text = stringResource(R.string.loading_failed), modifier = Modifier.padding(16.dp))
+        Button(onClick = retryAction) {
+            Text(stringResource(R.string.retry))
+        }
+    }
+}
+
