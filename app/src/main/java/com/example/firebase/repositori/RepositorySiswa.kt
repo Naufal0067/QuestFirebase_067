@@ -32,3 +32,14 @@ class FirebaseRepositorySiswa : RepositorySiswa {
         }
     }
 
+    override suspend fun postDataSiswa(siswa: Siswa) {
+        val docRef = collection.document(siswa.id.toString())
+        val data = hashMapOf(
+            "id" to siswa.id,
+            "nama" to siswa.nama,
+            "alamat" to siswa.alamat,
+            "telpon" to siswa.telpon
+        )
+        docRef.set(data).await()
+    }
+
