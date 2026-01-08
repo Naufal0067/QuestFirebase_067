@@ -76,7 +76,7 @@ fun DetailSiswaScreen(
         }, modifier = modifier
     ) { innerPadding ->
         val coroutineScope = rememberCoroutineScope()
-        BodyDetailSiswa(
+        BodyDetailDataSiswa(
             statusUIDetail = viewModel.statusUIDetail,
             onDelete = {
                 coroutineScope.launch {
@@ -92,7 +92,7 @@ fun DetailSiswaScreen(
 }
 
 @Composable
-private fun BodyDetailSiswa(
+private fun BodyDetailDataSiswa(
     statusUIDetail: StatusUIDetail,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier
@@ -105,7 +105,7 @@ private fun BodyDetailSiswa(
 
         when(statusUIDetail) {
             is StatusUIDetail.Success -> {
-                ItemDetailSiswa(
+                BarisDetailData(
                     siswa = statusUIDetail.satusiswa,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -134,3 +134,14 @@ private fun BodyDetailSiswa(
     }
 }
 
+@Composable
+fun BarisDetailData(
+    siswa: Siswa?,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        )
