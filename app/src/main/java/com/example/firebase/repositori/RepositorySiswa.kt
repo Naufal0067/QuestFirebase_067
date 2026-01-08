@@ -8,9 +8,9 @@ import kotlinx.coroutines.tasks.await
 interface RepositorySiswa {
     suspend fun getDataSiswa(): List<Siswa>
     suspend fun postDataSiswa(siswa: Siswa)
-    suspend fun getSiswaById(id: Long): Siswa
-    suspend fun updateSiswa(siswa: Siswa)
-    suspend fun deleteSiswa(siswa: Siswa)
+    suspend fun getSatuSiswa(id: Long): Siswa?
+    suspend fun editSatuSiswa(id: Long, siswa: Siswa)
+    suspend fun hapusSatuSiswa(id: Long)
 }
 
 class FirebaseRepositorySiswa : RepositorySiswa {
@@ -21,7 +21,7 @@ class FirebaseRepositorySiswa : RepositorySiswa {
         return try {
             collection.get().await().documents.map { doc ->
                 Siswa(
-                    id = doc.getLong("id")?.toLong() ?: 0L,
+                    id = doc.getLong("id")?.toLong() ?: 0,
                     nama = doc.getString("nama") ?: "",
                     alamat = doc.getString("alamat") ?: "",
                     telpon = doc.getString("telpon") ?: ""
@@ -33,9 +33,9 @@ class FirebaseRepositorySiswa : RepositorySiswa {
     }
 
     override suspend fun postDataSiswa(siswa: Siswa) {
-        val docRef = collection.document(siswa.id.toString())
+        val docRef = if (siswa.id == 0L) collection.document() else collection.document(siswa.id.toString())
         val data = hashMapOf(
-            "id" to siswa.id,
+            "id" to (siswa.id.takeIf { it != 0L } ?: docRef.id.hashCode()),
             "nama" to siswa.nama,
             "alamat" to siswa.alamat,
             "telpon" to siswa.telpon
@@ -43,30 +43,16 @@ class FirebaseRepositorySiswa : RepositorySiswa {
         docRef.set(data).await()
     }
 
-
-    override suspend fun getSiswaById(id: Long): Siswa {
+    override suspend fun getSatuSiswa(id: Long): Siswa? {
         return try {
-            val documentSnapshot = collection.document(id.toString()).get().await()
-            Siswa(
-                id = documentSnapshot.getLong("id")?.toLong() ?: 0L,
-                nama = documentSnapshot.getString("nama") ?: "",
-                alamat = documentSnapshot.getString("alamat") ?: "",
-                telpon = documentSnapshot.getString("telpon") ?: ""
-            )
-        } catch (e: Exception) {
-            Siswa()
+            val query = collection.whereEqualTo("id", id).get().await()
+            query.documents.firstOrNull()?.let { doc ->
+                Siswa(
+                    id = doc.getLong("id")?.toLong() ?: 0,
+                    nama = doc.getString("nama") ?: "",
+                    alamat = doc.getString("alamat") ?: "",
+                    telpon = doc.getString("telpon") ?: ""
+                )
+            }
         }
-    }
 
-    override suspend fun updateSiswa(siswa: Siswa) {
-        postDataSiswa(siswa)
-    }
-
-    override suspend fun deleteSiswa(siswa: Siswa) {
-        try {
-            collection.document(siswa.id.toString()).delete().await()
-        } catch (e: Exception) {
-            throw Exception("Gagal menghapus data siswa: ${e.message}")
-        }
-    }
-}
