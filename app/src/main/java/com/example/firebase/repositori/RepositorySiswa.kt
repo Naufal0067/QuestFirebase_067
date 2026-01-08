@@ -54,5 +54,9 @@ class FirebaseRepositorySiswa : RepositorySiswa {
                     telpon = doc.getString("telpon") ?: ""
                 )
             }
+        } catch (e: Exception) {
+            println("Gagal baca data siswa : ${e.message}")
+            null
         }
+    }
 
