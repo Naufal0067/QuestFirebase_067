@@ -162,3 +162,12 @@ fun BarisDetailData(
                 itemDetail = siswa?.alamat ?: "",
                 modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_medium))
             )
+            BarisDetailData(
+                labelResID = R.string.telpon1,
+                itemDetail = siswa?.telpon ?: "",
+                modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_medium))
+            )
+        }
+    }
+}
+
