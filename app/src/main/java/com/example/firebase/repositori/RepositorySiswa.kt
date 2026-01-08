@@ -60,3 +60,7 @@ class FirebaseRepositorySiswa : RepositorySiswa {
         }
     }
 
+    override suspend fun editSatuSiswa(id: Long, siswa: Siswa) {
+        val docQuery = collection.whereEqualTo("id", id).get().await()
+
+
